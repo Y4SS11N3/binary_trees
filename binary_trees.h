@@ -20,6 +20,17 @@ typedef struct binary_tree_s
 	struct binary_tree_s *right;
 } binary_tree_t;
 
+/**
+ * struct queue_s - simple queue structure for binary tree nodes
+ * @node: a pointer to a binary tree node
+ * @next: pointer to the next node in the queue
+ */
+typedef struct queue_s
+{
+	const binary_tree_t *node;
+	struct queue_s *next;
+} queue_t;
+
 void binary_tree_print(const binary_tree_t *);
 
 binary_tree_t *binary_tree_node(binary_tree_t *parent, int value);
