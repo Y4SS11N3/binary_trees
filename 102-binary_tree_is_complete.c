@@ -27,8 +27,10 @@ int check_complete(const binary_tree_t *tree, size_t index, size_t size)
 		return (1);
 	if (index >= size)
 		return (0);
+
 	return (check_complete(tree->left, 2 * index + 1, size) &&
-		check_complete(tree->right, 2 * index + 2, size));
+			check_complete(tree->right, 2 * index + 2, size) &&
+			(tree->left || !tree->right));
 }
 
 /**
