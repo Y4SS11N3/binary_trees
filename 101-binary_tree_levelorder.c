@@ -1,50 +1,44 @@
 #include "binary_trees.h"
 
 /**
- * enqueue - Adds a node to the queue
- * @head: pointer to the head of the queue
- * @node: pointer to the binary tree node to add to the queue
+ * btlo_helper - helper function to execute func on each node at a given level
+ * @tree: pointer to the root node of the tree to traverse
+ * @func: pointer to a function to call for each node's value
+ * @level: level at which to apply func
  */
-static void enqueue(queue_t **head, const binary_tree_t *node)
+void btlo_helper(const binary_tree_t *tree, void (*func)(int), size_t level)
 {
-	queue_t *new_node = malloc(sizeof(queue_t));
-	queue_t *temp = *head;
-
-	if (new_node == NULL)
+	if (tree == NULL || func == NULL)
 		return;
-
-	new_node->node = node;
-	new_node->next = NULL;
-
-	if (*head == NULL)
-	{
-		*head = new_node;
-	}
+	if (level == 0)
+		func(tree->n);
 	else
 	{
-		while (temp->next != NULL)
-			temp = temp->next;
-		temp->next = new_node;
+		btlo_helper(tree->left, func, level - 1);
+		btlo_helper(tree->right, func, level - 1);
 	}
 }
 
 /**
- * dequeue - Removes a node from the queue
- * @head: pointer to the head of the queue
- * Return: pointer to the dequeued binary tree node
+ * binary_tree_height - measures the height of a binary tree
+ * @tree: pointer to the root node of the tree to measure the height
+ *
+ * Return: height of the tree or 0 if tree is NULL
  */
-static const binary_tree_t *dequeue(queue_t **head)
+size_t binary_tree_height(const binary_tree_t *tree)
 {
-	if (head == NULL || *head == NULL)
-		return (NULL);
+	size_t height_l = 0;
+	size_t height_r = 0;
 
-	queue_t *temp = *head;
-	const binary_tree_t *node = temp->node;
-	*head = (*head)->next;
+	if (tree == NULL)
+		return (0);
 
-	free(temp);
+	if (tree->left)
+		height_l = 1 + binary_tree_height(tree->left);
+	if (tree->right)
+		height_r = 1 + binary_tree_height(tree->right);
 
-	return (node);
+	return (height_l > height_r ? height_l : height_r);
 }
 
 /**
@@ -55,21 +49,12 @@ static const binary_tree_t *dequeue(queue_t **head)
  */
 void binary_tree_levelorder(const binary_tree_t *tree, void (*func)(int))
 {
-	queue_t *queue = NULL;
+	size_t height, level;
 
 	if (tree == NULL || func == NULL)
 		return;
 
-	enqueue(&queue, tree);
-
-	while (queue != NULL)
-	{
-		const binary_tree_t *current = dequeue(&queue);
-
-		func(current->n);
-		if (current->left != NULL)
-			enqueue(&queue, current->left);
-		if (current->right != NULL)
-			enqueue(&queue, current->right);
-	}
+	height = binary_tree_height(tree);
+	for (level = 0; level <= height; level++)
+		btlo_helper(tree, func, level);
 }
