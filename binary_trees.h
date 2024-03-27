@@ -74,4 +74,4 @@ int binary_tree_is_heap(const binary_tree_t *tree);
 size_t count_nodes(const binary_tree_t *tree);
 int tree_is_complete(const binary_tree_t *node, size_t index, size_t nodes);
 
-#endif /* _BINARY_TREES_H_ */
+#endif
