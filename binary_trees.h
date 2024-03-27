@@ -71,5 +71,8 @@ avl_t *avl_remove(avl_t *root, int value);
 avl_t *sorted_array_to_avl(int *array, size_t size);
 
 int binary_tree_is_heap(const binary_tree_t *tree);
+int is_heap_helper(const binary_tree_t *tree);
+int is_heap_ordered(const binary_tree_t *node);
+int is_complete_helper(const binary_tree_t *tree, size_t index, size_t size);
 
 #endif
