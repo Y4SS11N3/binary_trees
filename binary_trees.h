@@ -65,5 +65,6 @@ bst_t *bst_remove(bst_t *root, int value);
 
 int binary_tree_is_avl(const binary_tree_t *tree);
 size_t tree_depth_measure(const binary_tree_t *node);
+avl_t *avl_insert(avl_t **tree, int value);
 
 #endif /* _BINARY_TREES_H_ */
