@@ -1,103 +1,101 @@
 #include "binary_trees.h"
 
 /**
- * find_inorder_successor - Finds the in-order
- * successor of a node in an AVL tree
- * @node: Pointer to the node to find the in-order successor for
+ * find_min_value - Finds the minimum value node in a subtree.
+ * @node: The root node of the subtree.
  *
- * Return: Pointer to the in-order successor node
+ * Return: The minimum value node.
  */
-static avl_t *find_inorder_successor(avl_t *node)
+static avl_t *find_min_value(avl_t *node)
 {
-	avl_t *current = node->right;
+    avl_t *current = node;
 
-	while (current && current->left != NULL)
-		current = current->left;
-	return (current);
+    while (current && current->left != NULL)
+        current = current->left;
+
+    return current;
 }
 
 /**
- * remove_node - Handles the removal of a node in an AVL tree
- * @root: Pointer to the root node of the tree
- * @value: The value to remove from the tree
+ * remove_and_rebalance - Removes a node and rebalances the AVL tree.
+ * @root: The root of the AVL tree.
+ * @value: The value to remove.
  *
- * Return: Pointer to the new root node after removal
+ * Return: The new root after removal and rebalancing.
  */
-static avl_t *remove_node(avl_t *root, int value)
+static avl_t *remove_and_rebalance(avl_t *root, int value)
 {
-	if (root == NULL)
-		return (NULL);
+    if (root == NULL)
+        return NULL;
 
-	if (value < root->n)
-		root->left = avl_remove(root->left, value);
-	else if (value > root->n)
-		root->right = avl_remove(root->right, value);
-	else
-	{
-		if (root->left == NULL || root->right == NULL)
-		{
-			avl_t *temp = root->left ? root->left : root->right;
+    if (value < root->n)
+        root->left = remove_and_rebalance(root->left, value);
+    else if (value > root->n)
+        root->right = remove_and_rebalance(root->right, value);
+    else
+    {
+        if (root->left == NULL || root->right == NULL)
+        {
+            avl_t *temp = root->left ? root->left : root->right;
+            if (temp == NULL)
+            {
+                temp = root;
+                root = NULL;
+            }
+            else
+                *root = *temp;
+            free(temp);
+        }
+        else
+        {
+            avl_t *temp = find_min_value(root->right);
+            root->n = temp->n;
+            root->right = remove_and_rebalance(root->right, temp->n);
+        }
+    }
 
-			if (temp == NULL)
-			{
-				temp = root;
-				root = NULL;
-			}
-			else
-				*root = *temp;
-			free(temp);
-		}
-		else
-		{
-			avl_t *temp = find_inorder_successor(root);
+    if (root == NULL)
+        return root;
 
-			root->n = temp->n;
-			root->right = avl_remove(root->right, temp->n);
-		}
-	}
-	return (root);
+    rebalance_avl(&root);
+    return root;
 }
 
 /**
- * rebalance_avl - Rebalances an AVL tree after a node has been removed
- * @root: Pointer to the root node of the tree to rebalance
+ * avl_remove - Wrapper function for removing a node from an AVL tree.
+ * @root: The root of the AVL tree.
+ * @value: The value to remove.
  *
- * Return: Pointer to the new root node after rebalancing
- */
-static avl_t *rebalance_avl(avl_t *root)
-{
-	int balance = binary_tree_balance(root);
-
-	if (balance > 1 && binary_tree_balance(root->left) >= 0)
-		return (binary_tree_rotate_right(root));
-	if (balance > 1 && binary_tree_balance(root->left) < 0)
-	{
-		root->left = binary_tree_rotate_left(root->left);
-		return (binary_tree_rotate_right(root));
-	}
-	if (balance < -1 && binary_tree_balance(root->right) <= 0)
-		return (binary_tree_rotate_left(root));
-	if (balance < -1 && binary_tree_balance(root->right) > 0)
-	{
-		root->right = binary_tree_rotate_right(root->right);
-		return (binary_tree_rotate_left(root));
-	}
-	return (root);
-}
-
-/**
- * avl_remove - Removes a node from an AVL tree
- * @root: Pointer to the root node of the tree for removing a node
- * @value: The value to remove in the tree
- *
- * Return: Pointer to the new root node of
- * the tree after removing the desired value and rebalancing
+ * Return: The new root after removal and rebalancing.
  */
 avl_t *avl_remove(avl_t *root, int value)
 {
-	root = remove_node(root, value);
-	if (root == NULL)
-		return (NULL);
+    return remove_and_rebalance(root, value);
+}
 
-	return (rebalance_avl(root));
+/**
+ * rebalance_avl - Rebalances an AVL tree at a given node.
+ * @tree: The node to rebalance from.
+ */
+void rebalance_avl(avl_t **tree)
+{
+    int balance;
+    avl_t *root = *tree;
+
+    if (root == NULL)
+        return;
+
+    balance = binary_tree_balance(root);
+    if (balance > 1)
+    {
+        if (binary_tree_balance(root->left) < 0)
+            root->left = binary_tree_rotate_left(root->left);
+        *tree = binary_tree_rotate_right(root);
+    }
+    else if (balance < -1)
+    {
+        if (binary_tree_balance(root->right) > 0)
+            root->right = binary_tree_rotate_right(root->right);
+        *tree = binary_tree_rotate_left(root);
+    }
 }
