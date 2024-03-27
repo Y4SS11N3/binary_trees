@@ -68,6 +68,5 @@ size_t tree_depth_measure(const binary_tree_t *node);
 avl_t *avl_insert(avl_t **tree, int value);
 avl_t *array_to_avl(int *array, size_t size);
 avl_t *avl_remove(avl_t *root, int value);
-void rebalance_avl(avl_t **tree);
 
 #endif /* _BINARY_TREES_H_ */
