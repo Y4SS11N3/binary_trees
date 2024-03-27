@@ -76,5 +76,6 @@ int is_heap_ordered(const binary_tree_t *node);
 int is_complete_helper(const binary_tree_t *tree, size_t index, size_t size);
 binary_tree_t *find_insert_pos(heap_t **root);
 heap_t *heap_insert(heap_t **root, int value);
+heap_t *array_to_heap(int *array, size_t size);
 
 #endif
