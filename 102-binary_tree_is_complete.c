@@ -29,8 +29,7 @@ int check_complete(const binary_tree_t *tree, size_t index, size_t size)
 		return (0);
 
 	return (check_complete(tree->left, 2 * index + 1, size) &&
-			check_complete(tree->right, 2 * index + 2, size) &&
-			(tree->left || !tree->right));
+			check_complete(tree->right, 2 * index + 2, size));
 }
 
 /**
@@ -41,7 +40,11 @@ int check_complete(const binary_tree_t *tree, size_t index, size_t size)
  */
 int binary_tree_is_complete(const binary_tree_t *tree)
 {
-	size_t size = get_tree_size(tree);
+	size_t size;
+
+	if (!tree)
+		return (0);
+	size = get_tree_size(tree);
 
 	return (check_complete(tree, 0, size));
 }
