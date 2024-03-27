@@ -7,9 +7,12 @@
  */
 bst_t *binary_tree_min(bst_t *tree)
 {
-	while (tree && tree->left != NULL)
-		tree = tree->left;
-	return (tree);
+	bst_t *current = tree;
+
+	while (current && current->left != NULL)
+		current = current->left;
+
+	return (current);
 }
 
 /**
@@ -24,16 +27,16 @@ bst_t *bst_remove(bst_t *root, int value)
 	if (root == NULL)
 		return (NULL);
 
-	/* Node is found, perform removal */
 	if (value < root->n)
 		root->left = bst_remove(root->left, value);
 	else if (value > root->n)
 		root->right = bst_remove(root->right, value);
 	else
 	{
-		/* Node with only one child or no child */
+		/* Node to be removed is found */
 		if (root->left == NULL)
 		{
+			/* Node has no left child */
 			bst_t *temp = root->right;
 
 			free(root);
@@ -41,20 +44,19 @@ bst_t *bst_remove(bst_t *root, int value)
 		}
 		else if (root->right == NULL)
 		{
+			/* Node has no right child */
 			bst_t *temp = root->left;
 
 			free(root);
 			return (temp);
 		}
 
-		/* Node with two children: Get the inorder successor */
+		/* Node has two children */
 		bst_t *temp = binary_tree_min(root->right);
 
-		/* Copy the inorder successor's content to this node */
 		root->n = temp->n;
-
-		/* Delete the inorder successor */
 		root->right = bst_remove(root->right, temp->n);
 	}
+
 	return (root);
 }
