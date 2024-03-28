@@ -89,5 +89,7 @@ int *heap_to_sorted_array(heap_t *heap, size_t *size);
 
 /* Other function prototypes and definitions */
 size_t tree_depth_measure(const binary_tree_t *node);
+int is_heap_helper(const binary_tree_t *tree);
+int is_complete_helper(const binary_tree_t *tree, size_t index, size_t size);
 
 #endif /* BINARY_TREES_H */
